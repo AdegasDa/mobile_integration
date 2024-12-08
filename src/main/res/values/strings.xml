@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">GroupCAScreenNavigation</string>
-    <string name="back_button">Back</string>
-    <string name="categories">Categories</string>
-    <string name="events">Events</string>
-    <string name="news_image">News Image</string>
-    <string name="news_title">News</string>
-    <string name="article_details">Article Details</string>
-</resources>
