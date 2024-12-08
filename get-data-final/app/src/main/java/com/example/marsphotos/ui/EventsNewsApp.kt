@@ -18,7 +18,10 @@
 
 package com.example.marsphotos.ui
 
+import android.widget.Space
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,13 +34,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.marsphotos.R
+import com.example.marsphotos.data.AppContainer
 import com.example.marsphotos.ui.screens.EventsViewModel
+import com.example.marsphotos.ui.screens.EventsViewModelFactory
 import com.example.marsphotos.ui.screens.HomeScreen
 
 @Composable
-fun EventsApp() {
+fun EventsApp(appContainer: AppContainer) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -46,10 +52,14 @@ fun EventsApp() {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            val eventsViewModel: EventsViewModel = viewModel()
+            val viewModel: EventsViewModel = viewModel(
+                factory = EventsViewModelFactory(appContainer.newsRepository)
+            )
+            Spacer(Modifier.padding(40.dp))
             HomeScreen(
-                marsUiState = eventsViewModel.eventsUiState,
-                retryAction = eventsViewModel::getNewsArticles,
+                NewsUiState = viewModel.eventsUiState,
+                retryAction = { viewModel.fetchAndStoreNewsArticles() },
+                fetchCategoryNews = { category -> viewModel.getNewsByCategory(category) },
                 contentPadding = it
             )
         }

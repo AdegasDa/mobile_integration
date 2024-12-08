@@ -21,14 +21,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.marsphotos.R
@@ -44,15 +42,34 @@ import com.example.marsphotos.model.Events
 
 @Composable
 fun HomeScreen(
-    marsUiState: MarsUiState,
+    NewsUiState: NewsUiState,
     retryAction: () -> Unit,
+    fetchCategoryNews: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    when (marsUiState) {
-        is MarsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is MarsUiState.Success -> NewsListScreen(marsUiState.sources)
-        is MarsUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+    Column {
+        // Dropdown or selection for category
+        CategorySelector(onCategorySelected = fetchCategoryNews)
+
+        when (NewsUiState) {
+            is NewsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+            is NewsUiState.Success -> NewsListScreen(NewsUiState.sources)
+            is NewsUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+        }
+    }
+}
+
+@Composable
+fun CategorySelector(onCategorySelected: (String) -> Unit) {
+    // Example categories
+    val categories = listOf("business", "entertainment", "health", "science", "sports", "technology")
+    LazyColumn {
+        items(categories) { category ->
+            Button(onClick = { onCategorySelected(category) }) {
+                Text(text = category.capitalize())
+            }
+        }
     }
 }
 
@@ -83,11 +100,15 @@ fun NewsCard(event: Events) {
  */
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.loading_img),
-        contentDescription = stringResource(R.string.loading)
-    )
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Select a category",
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 /**

@@ -24,18 +24,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.example.marsphotos.data.AppContainer
+import com.example.marsphotos.data.AppDataContainer
 import com.example.marsphotos.ui.EventsApp
 
 class MainActivity : ComponentActivity() {
+
+    // Initialize appContainer here
+    private lateinit var appContainer: AppContainer
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge() // Optional: Enables edge-to-edge UI for immersive apps
         super.onCreate(savedInstanceState)
+
+        // Ensure appContainer is initialized before use
+        appContainer = AppDataContainer(applicationContext)
+
         setContent {
-            MaterialTheme  {
+            MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    EventsApp() // Launch the EventsApp composable
+                    // Pass initialized appContainer to EventsApp
+                    EventsApp(appContainer = appContainer)
                 }
             }
         }
